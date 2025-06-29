@@ -1,0 +1,28 @@
+{
+  "sources": [
+    "https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/3089",
+    "https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2812",
+    "https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2780",
+    "https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2890",
+    "https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2785",
+    "https://support.flexquarters.com/esupport/index.php?/Default/Knowledgebase/Article/View/2859",
+    "http://support.flexquarters.com/esupport/index.php?/Default/Knowledgebase/Article/View/2858",
+    "https://support.flexquarters.com/esupport/index.php?/Knowledgebase/Article/View/2658/"
+  ],
+  "primary_topic": "",
+  "auto_process_on_startup": true,
+  "crawl_mode": "",
+  "last_updated": "2025-05-22 16:02:40",
+  "total_urls": 8,
+  "processing_results": [
+    "https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/3089: Successfully processed and stored 10 chunks from https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/3089 in Pinecone index 'chatbot'.",
+    "https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2812: Successfully processed and stored 3 chunks from https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2812 in Pinecone index 'chatbot'.",
+    "https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2780: Successfully processed and stored 6 chunks from https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2780 in Pinecone index 'chatbot'.",
+    "https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2890: Successfully processed and stored 3 chunks from https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2890 in Pinecone index 'chatbot'.",
+    "https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2785: Successfully processed and stored 12 chunks from https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2785 in Pinecone index 'chatbot'.",
+    "https://support.flexquarters.com/esupport/index.php?/Default/Knowledgebase/Article/View/2859: Successfully processed and stored 7 chunks from https://support.flexquarters.com/esupport/index.php?/Default/Knowledgebase/Article/View/2859 in Pinecone index 'chatbot'.",
+    "http://support.flexquarters.com/esupport/index.php?/Default/Knowledgebase/Article/View/2858: Successfully processed and stored 6 chunks from http://support.flexquarters.com/esupport/index.php?/Default/Knowledgebase/Article/View/2858 in Pinecone index 'chatbot'.",
+    "https://support.flexquarters.com/esupport/index.php?/Knowledgebase/Article/View/2658/: Successfully processed and stored 7 chunks from https://support.flexquarters.com/esupport/index.php?/Knowledgebase/Article/View/2658/ in Pinecone index 'chatbot'."
+  ],
+  "summary": "Completed processing 8 URLs with 54 total chunks stored in index 'chatbot'."
+}

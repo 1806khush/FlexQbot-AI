@@ -1,0 +1,62 @@
+{
+  "sources": [
+    "https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/3089",
+    "https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2812",
+    "https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2780",
+    "https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2890",
+    "https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2785",
+    "https://support.flexquarters.com/esupport/index.php?/Default/Knowledgebase/Article/View/2859",
+    "http://support.flexquarters.com/esupport/index.php?/Default/Knowledgebase/Article/View/2858",
+    "https://support.flexquarters.com/esupport/index.php?/Knowledgebase/Article/View/2658/",
+    "https://support.flexquarters.com/esupport/index.php?/Knowledgebase/Article/View/2816"
+  ],
+  "primary_topic": "QODBC Support",
+  "auto_process_on_startup": true,
+  "crawl_mode": "create",
+  "last_updated": "2025-06-28 16:49:40",
+  "total_urls": 9,
+  "processing_results": {
+    "https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/3089": {
+      "status": "success",
+      "message": "Successfully processed and stored 1 chunks from https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/3089"
+    },
+    "https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2812": {
+      "status": "success",
+      "message": "Successfully processed and stored 1 chunks from https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2812"
+    },
+    "https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2780": {
+      "status": "success",
+      "message": "Successfully processed and stored 1 chunks from https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2780"
+    },
+    "https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2890": {
+      "status": "success",
+      "message": "Successfully processed and stored 1 chunks from https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2890"
+    },
+    "https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2785": {
+      "status": "success",
+      "message": "Successfully processed and stored 2 chunks from https://support.flexquarters.com/esupport/index.php/Knowledgebase/Article/View/2785"
+    },
+    "https://support.flexquarters.com/esupport/index.php?/Default/Knowledgebase/Article/View/2859": {
+      "status": "success",
+      "message": "Successfully processed and stored 1 chunks from https://support.flexquarters.com/esupport/index.php?/Default/Knowledgebase/Article/View/2859"
+    },
+    "http://support.flexquarters.com/esupport/index.php?/Default/Knowledgebase/Article/View/2858": {
+      "status": "success",
+      "message": "Successfully processed and stored 1 chunks from http://support.flexquarters.com/esupport/index.php?/Default/Knowledgebase/Article/View/2858"
+    },
+    "https://support.flexquarters.com/esupport/index.php?/Knowledgebase/Article/View/2658/": {
+      "status": "success",
+      "message": "Successfully processed and stored 1 chunks from https://support.flexquarters.com/esupport/index.php?/Knowledgebase/Article/View/2658/"
+    },
+    "https://support.flexquarters.com/esupport/index.php?/Knowledgebase/Article/View/2816": {
+      "status": "success",
+      "message": "Successfully processed and stored 1 chunks from https://support.flexquarters.com/esupport/index.php?/Knowledgebase/Article/View/2816"
+    }
+  },
+  "summary": "Processed 9 URLs successfully, 0 failed",
+  "created_at": null,
+  "last_modified": "2025-06-28 16:49:40",
+  "last_config_sync": "2025-06-06 18:05:25",
+  "last_error": "'52c8fa25079ac3234052614bf35973cd'",
+  "last_error_time": "2025-06-28 11:21:07"
+}

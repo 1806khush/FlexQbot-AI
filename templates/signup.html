@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QODBC Chatbot - Signup Form</title>
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #204870;
+      color: #ffffff;
+      line-height: 1.6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* Centered Form Container */
+    #chat-form-container {
+      width: 450px;
+      background: #ffffff;
+      padding: 10px;
+      border-radius: 20px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin: 20px;
+    }
+
+    #chat-form-container h1 {
+      font-size: 28px;
+      margin-bottom: 30px;
+      text-align: center;
+      color: #2C5F34;
+      font-weight: 700;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 500;
+      color: #475569;
+      font-size: 15px;
+      text-align: left;
+      padding-left: 20px;
+    }
+
+    .required {
+      background-color: #2C5F34;
+      color: white;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 6px;
+      vertical-align: middle;
+      font-weight: 600;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"] {
+      width: 90%;
+      padding: 14px 18px;
+      font-size: 15px;
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      color: #1e293b;
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+      margin: 0 auto;
+      display: block;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #2C5F34;
+      box-shadow: 0 0 0 3px rgba(44, 95, 52, 0.2);
+      background-color: #ffffff;
+    }
+
+    input::placeholder {
+      color: #94a3b8;
+      opacity: 0.7;
+    }
+
+    button[type="submit"] {
+      background-color: #2C5F34;
+      color: white;
+      border: none;
+      padding: 16px;
+      width: 90%;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      margin: 0 auto;
+      display: block;
+      position: relative;
+      overflow: hidden;
+      letter-spacing: 0.5px;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #24552c;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+    }
+
+    button[type="submit"]:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 3px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Spinner */
+    .spinner {
+      display: none;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top: 3px solid #ffffff;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      margin: 0 auto;
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg) translateY(-50%); }
+      100% { transform: rotate(360deg) translateY(-50%); }
+    }
+
+    /* Status Messages */
+    #status-message {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 10px;
+      display: none;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.5;
+    }
+
+    .success {
+      background-color: rgba(34, 197, 94, 0.12);
+      color: #16a34a;
+      border: 1px solid rgba(34, 197, 94, 0.25);
+    }
+
+    .error {
+      background-color: rgba(239, 68, 68, 0.12);
+      color: #dc2626;
+      border: 1px solid rgba(239, 68, 68, 0.25);
+    }
+
+    .warning {
+      background-color: rgba(44, 95, 52, 0.12);
+      color: #2C5F34;
+      border: 1px solid rgba(44, 95, 52, 0.25);
+    }
+
+    /* Logo Section */
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
+      transition: transform 0.3s ease;
+    }
+
+    .logo:hover {
+      transform: scale(1.05);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      #chat-form-container {
+        width: 90%;
+        padding: 25px;
+      }
+
+      #chat-form-container h1 {
+        font-size: 24px;
+      }
+
+      input[type="text"],
+      input[type="email"],
+      input[type="tel"],
+      button[type="submit"],
+      #status-message {
+        width: 100%;
+      }
+    }
+
+    /* Floating Widget Button */
+    .floating-widget {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      background-color: #2C5F34;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .floating-widget:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .floating-widget i {
+      font-size: 24px;
+    }
+
+    /* Modal Overlay */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background-color: white;
+      border-radius: 16px;
+      max-width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: scale(0.9);
+      transition: all 0.3s ease;
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: scale(1);
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #475569;
+      background: none;
+      border: none;
+      z-index: 1;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <!-- Floating Widget Button -->
+  <div class="floating-widget" id="widgetButton">
+    <i class="fas fa-comment-dots"></i>
+  </div>
+
+  <!-- Modal Overlay -->
+  <div class="modal-overlay" id="modalOverlay">
+    <button class="close-modal" id="closeModal">&times;</button>
+    <div class="modal-content">
+      <!-- Signup Form -->
+      <div id="chat-form-container">
+        <div class="logo">
+          <h1>QODBC Chatbot</h1>
+        </div>
+        <form id="signup-form">
+          <div class="form-group">
+            <label for="name">Name <span class="required">REQUIRED</span></label>
+            <input type="text" id="name" name="name" required placeholder="Enter your full name"/>
+          </div>
+          <div class="form-group">
+            <label for="email">Email <span class="required">REQUIRED</span></label>
+            <input type="email" id="email" name="email" required placeholder="Enter your email address"/>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" name="phone" placeholder="Optional phone number"/>
+          </div>
+          <button type="submit" id="submit-btn">
+            <span>Submit</span>
+            <div class="spinner" id="spinner"></div>
+          </button>
+          <div id="status-message"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const signupForm = document.getElementById('signup-form');
+      const submitBtn = document.getElementById('submit-btn');
+      const spinner = document.getElementById('spinner');
+      const statusMessage = document.getElementById('status-message');
+      
+      // Widget and modal elements
+      const widgetButton = document.getElementById('widgetButton');
+      const modalOverlay = document.getElementById('modalOverlay');
+      const closeModal = document.getElementById('closeModal');
+      
+      // Check if widget was open before page reload/navigation
+      const widgetWasOpen = localStorage.getItem('chatbot_widget_open') === 'true';
+      
+      // Initialize modal state based on stored preference
+      if (widgetWasOpen) {
+        modalOverlay.classList.add('active');
+      }
+      
+      // Toggle modal visibility and store state
+      function toggleModal() {
+        modalOverlay.classList.toggle('active');
+        // Store current state
+        localStorage.setItem('chatbot_widget_open', modalOverlay.classList.contains('active'));
+      }
+      
+      // Widget click handler
+      widgetButton.addEventListener('click', toggleModal);
+      
+      // Close modal handlers
+      closeModal.addEventListener('click', toggleModal);
+      modalOverlay.addEventListener('click', function(e) {
+        if (e.target === modalOverlay) {
+          toggleModal();
+        }
+      });
+
+      // Check if we already have stored user info
+      const userName = localStorage.getItem('chatbot_user_name');
+      const userEmail = localStorage.getItem('chatbot_user_email');
+      
+      // If we have stored credentials, auto-fill the form
+      if (userName && userEmail) {
+        document.getElementById('name').value = userName;
+        document.getElementById('email').value = userEmail;
+        document.getElementById('phone').value = localStorage.getItem('chatbot_user_phone') || '';
+        
+        // Show message that user is returning
+        statusMessage.textContent = 'Welcome back! You can continue to the chatbot or update your details.';
+        statusMessage.className = 'warning';
+        statusMessage.style.display = 'block';
+      }
+      
+      // Handle form submission
+      signupForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Get form values
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        
+        // Validate form data
+        if (!name || !email) {
+          statusMessage.textContent = 'Please fill in all required fields.';
+          statusMessage.className = 'error';
+          statusMessage.style.display = 'block';
+          return;
+        }
+        
+        // Store the user information in localStorage
+        localStorage.setItem('chatbot_user_name', name);
+        localStorage.setItem('chatbot_user_email', email);
+        localStorage.setItem('chatbot_user_phone', phone);
+        
+        // Show loading spinner
+        submitBtn.disabled = true;
+        spinner.style.display = 'block';
+        statusMessage.style.display = 'none';
+        submitBtn.querySelector('span').style.opacity = '0.8';
+        
+        // Send data to server
+        fetch('/submit-form', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: name,
+            email: email,
+            phone: phone
+          })
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Server responded with status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          spinner.style.display = 'none';
+          submitBtn.querySelector('span').style.opacity = '1';
+          
+          if (data.error) {
+            // Show error message
+            statusMessage.textContent = data.error;
+            statusMessage.className = 'error';
+            statusMessage.style.display = 'block';
+            submitBtn.disabled = false;
+          } else {
+            // Show message based on if user is returning or new
+            if (data.is_returning_user) {
+              statusMessage.textContent = 'Welcome back! Redirecting to chatbot...';
+              statusMessage.className = 'warning';
+            } else {
+              statusMessage.textContent = 'Registration successful! Redirecting to chatbot...';
+              statusMessage.className = 'success';
+            }
+            statusMessage.style.display = 'block';
+            
+            // Keep widget open when redirecting
+            localStorage.setItem('chatbot_widget_open', 'true');
+            
+            // Redirect to chatbot page after a short delay
+            setTimeout(() => {
+              window.location.href = '/chatbot';
+            }, 1500);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          spinner.style.display = 'none';
+          submitBtn.querySelector('span').style.opacity = '1';
+          statusMessage.textContent = 'An error occurred. Please try again.';
+          statusMessage.className = 'error';
+          statusMessage.style.display = 'block';
+          submitBtn.disabled = false;
+        });
+      });
+    });
+  </script>
+</body>
+</html>

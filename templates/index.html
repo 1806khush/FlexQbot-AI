@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>QODBC Chatbot</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+    a, a.visited,
+    a.source-link {
+        color: #2563eb ;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: #204870;
+        color: #111827;
+        line-height: 1.6;
+        overflow-y: auto; /* Added for page scroll */
+    }
+
+    /* Custom scrollbar for the entire page */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #2C5F34;
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #1e4a28;
+    }
+
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 24px;
+    }
+
+    .chat-container {
+        height: 60vh;
+        overflow-y: auto;
+        padding: 24px;
+        background-color: #ffffff;
+        border-radius: 16px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e5e7eb;
+    }
+
+    .bot-msg, .user-msg {
+        margin-bottom: 16px;
+        padding: 14px 18px;
+        border-radius: 18px;
+        max-width: 95%;
+        word-wrap: break-word;
+        animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .bot-msg {
+        background: linear-gradient(135deg, #e2e8ec, #e2e8ec);
+        float: left;
+        clear: both;
+        border-bottom-left-radius: 4px;
+        color: #000000;
+        border: 1px solid #ffffff;
+        font-size: 0.85rem; /* Adjust font size here */
+    }
+
+
+    .user-msg {
+        background-color: #2C5F34;
+        float: right;
+        clear: both;
+        border-bottom-right-radius: 4px;
+        color: #ffffff;
+        border: 1px solid #e5e7eb;
+        font-size: 0.85rem; /* Adjust font size here */
+    }
+
+    .clear { clear: both; }
+
+    .form-control {
+        background-color: #ffffff;
+        color: #111827;
+        border: 1px solid #d1d5db;
+        border-radius: 12px;
+        padding: 14px 18px;
+    }
+
+    .form-control:focus {
+        background-color: #ffffff;
+        color: #111827;
+        border-color: #818cf8;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        outline: none;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #2C5F34, #2C5F34);
+        border: none;
+        border-radius: 12px;
+        padding: 10px 20px;
+        font-weight: 600;
+        color: white;
+    }
+
+    .header {
+        margin-bottom: 30px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .bot-title h1 {
+        font-weight: 700;
+        font-size: 1.5rem;
+        background: linear-gradient(90deg, #ffffff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        margin: 0;
+    }
+
+    .bot-subtitle {
+        color: #ffffff;
+        font-size: 0.75rem;
+        margin-top: 4px;
+    }
+
+    .user-info {
+        color: #ffffff;
+        font-size: 0.85rem;
+        margin-top: 10px;
+    }
+
+    .nav-tabs {
+        border-bottom: none;
+        gap: 4px;
+    }
+
+    .nav-tabs .nav-link {
+        color: #6b7280;
+        border: 1px solid transparent;
+        border-radius: 16px 16px 0 0;
+        padding: 12px 20px;
+    }
+
+    .nav-tabs .nav-link.active {
+        background-color: #2C5F34;
+        color: #e5e7eb;
+        border: 1px solid #e5e7eb;
+        border-bottom: none;
+        font-weight: 500;
+    }
+
+    .tab-content {
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 0 0 16px 16px;
+        border: 1px solid #e5e7eb;
+        border-top: none;
+    }
+
+    .sources-panel {
+        background-color: #ffffff;
+        border-radius: 16px;
+        padding: 20px;
+        border: 1px solid #e5e7eb;
+    }
+
+    .progress {
+        height: 6px;
+        background-color: #e5e7eb;
+        border-radius: 8px;
+    }
+
+    .progress-bar {
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+    }
+
+    .history-divider {
+        text-align: center;
+        color: #6b7280;
+        margin: 24px 0;
+        font-size: 0.85rem;
+        position: relative;
+    }
+
+    .history-divider::before,
+    .history-divider::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        width: 35%;
+        height: 1px;
+        background-color: #e5e7eb;
+    }
+
+    .history-divider::before { left: 0; }
+    .history-divider::after { right: 0; }
+
+    .message-timestamp {
+        font-size: 0.7rem;
+        color: #adadad;
+        display: block;
+        margin-top: 8px;
+        text-align: right;
+    }
+
+    .source-link a {
+        color: #4f46e5 !important;
+        text-decoration: underline !important;
+        border-bottom: none !important;
+    }
+
+    .error-message {
+        color: #dc2626;
+        background-color: rgba(220, 38, 38, 0.05);
+        padding: 12px;
+        border-radius: 8px;
+        margin: 8px 0;
+        border-left: 4px solid #dc2626;
+    }
+
+    .loading-message {
+        color: #2C5F34;
+        font-style: italic;
+        opacity: 0.8;
+    }
+
+    /* Chat container scrollbar */
+    .chat-container::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .chat-container::-webkit-scrollbar-track {
+        background: #a3aeb9;
+        border-radius: 4px;
+    }
+
+    .chat-container::-webkit-scrollbar-thumb {
+        background: #a3aeb9;
+        border-radius: 4px;
+    }
+
+    .chat-container::-webkit-scrollbar-thumb:hover {
+        background: #a3aeb9;
+    }
+
+    /* Floating container styles */
+    .floating-container {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        max-width: 450px;
+        max-height: 90vh;
+        background-color: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        z-index: 1000;
+        transition: all 0.3s ease;
+    }
+
+    .floating-container.hidden {
+        display: none;
+    }
+
+    .floating-header {
+        padding: 24px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .floating-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 24px;
+    }
+
+    .floating-footer {
+        padding: 16px 24px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    /* Chat widget button styles */
+    .chat-widget-button {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        background-color: #2C5F34;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        z-index: 999;
+        transition: all 0.3s ease;
+    }
+
+    .chat-widget-button:hover {
+        background-color: #1e4a28;
+        transform: scale(1.05);
+    }
+
+    .chat-widget-button i {
+        font-size: 24px;
+    }
+
+    /* Close button styles */
+    .close-button {
+        position: absolute;
+        top: 25px;
+        right: 15px;
+        width: 30px;
+        height: 30px;
+        background: transparent;
+        border: none;
+        border-radius: 20%;
+        font-size: 20px;
+        color: #ffffff;
+        cursor: pointer;
+        z-index: 1002;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+    .close-button:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+    .close-button:active {
+        background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Header buttons */
+    .header-button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        z-index: 1002;
+        transition: all 0.2s ease;
+        background-color: transparent;
+    }
+
+    .header-button:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    #backButton {
+        left: 15px;
+        border-radius: 8px;
+        top: 35px; /* Moves the button up by 5px from the top */
+    }
+
+
+    #settingsButton {
+        right: 50px;
+        border-radius: 8px;
+        top: 40px; /* Moves the button up by 5px from the top */
+    }
+
+    /* New styles for sentiment and reactions */
+    .reaction-container {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 5px;
+        gap: 5px;
+    }
+
+    .reaction-btn {
+        background: none;
+        border: none;
+        font-size: 16px;
+        cursor: pointer;
+        padding: 2px 5px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+    }
+
+    .reaction-btn:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+        transform: scale(1.2);
+    }
+
+    .reaction-btn.active {
+        background-color: rgba(44, 95, 52, 0.2);
+    }
+
+    .sentiment-indicator {
+        font-size: 12px;
+        color: #666;
+        margin-top: 5px;
+        font-style: italic;
+    }
+
+    .empathetic {
+        background: linear-gradient(135deg, #f0f9ff, #e0f2fe) !important;
+        border-left: 3px solid #38bdf8 !important;
+    }
+
+    .technical {
+        background: linear-gradient(135deg, #f0fdf4, #dcfce7) !important;
+        border-left: 3px solid #22c55e !important;
+    }
+
+    .friendly {
+        background: linear-gradient(135deg, #fef2f2, #fee2e2) !important;
+        border-left: 3px solid #ef4444 !important;
+    }
+    </style>
+    <!-- Font Awesome for the widget icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Chat Widget Button - Updated to match recent_conversations.html -->
+    <div class="chat-widget-button" id="chatWidgetButton">
+        <i class="fas fa-comment-dots"></i>
+    </div>
+
+    <!-- Floating Chat Container -->
+    <div class="floating-container hidden" id="floatingChatContainer">
+        <!-- Close Button -->
+        <button class="close-button" id="closeChatBtn" aria-label="Close chat" title="Close chat">✕</button>
+
+        <!-- Header Section -->
+        <div class="floating-header" style="background-color: #2C5F34; color: white; border-radius: 16px 16px 0 0; padding: 15px 24px; position: relative;">
+            <!-- Back Button -->
+            <button class="header-button" id="backButton">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            
+            <!-- Settings Button -->
+            <button class="header-button" id="settingsButton">
+                <i class="fas fa-cog"></i>
+            </button>
+
+            <div class="bot-title">
+                <div style="margin-left: -90px;">
+                    <h1 style="margin: 0; font-size: 1.25rem; text-align: center;">FLEXquarters.com Limited</h1>
+                    <div style="margin-left: -100px; margin-top: -5px;">
+                        <p class="bot-subtitle" style="margin: 8px 0 0 0; text-align: center;">Our team can help if needed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="floating-content" style="padding: 0; display: flex; flex-direction: column; flex-grow: 1;">
+            <!-- Chat Container -->
+            <div class="chat-container" id="chatbox" 
+                style="border-radius: 0; border-left: none; border-right: none; flex-grow: 1; border-bottom: none;">  
+            </div>
+
+            <!-- Input Area -->
+            <div style="padding: 16px 24px; background: white; border-top: 1px solid #e5e7eb; border-radius: 0 0 16px 16px;">
+                {% if viewing_past_conversation %}
+                    <div class="text-center">
+                        <button class="btn btn-primary" id="startNewConversationBtn" style="width: 100%;">Start New Conversation</button>
+                    </div>
+                {% else %}
+                    <form id="chat-form">
+                        <div class="input-group">
+                            <input type="text" id="textInput" class="form-control" placeholder="Type your message here..." 
+                                style="border-radius: 12px 0 0 12px;">
+                            <button class="btn btn-primary" type="submit" style="border-radius: 0 12px 12px 0;">➣</button>
+                        </div>
+                    </form>
+                    <div class="text-center mt-2">
+                        <small class="text-muted">Powered by Flexquaters</small>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        // Track if welcome message has been shown
+        let welcomeMessageShown = false;
+        let currentUserMood = 'neutral';
+        let messageReactions = {};
+        
+        // Handle the new conversation button
+        document.getElementById('startNewConversationBtn')?.addEventListener('click', function() {
+            // Clear the viewing session from URL
+            window.location.href = '/chatbot';
+        });
+
+        // Back button functionality
+        document.getElementById('backButton').addEventListener('click', function() {
+            window.location.href = '/recent_conversations';
+        });
+
+        // Settings button functionality
+        document.getElementById('settingsButton').addEventListener('click', function() {
+            window.location.href = '/settings.html';
+        });
+
+        $(document).ready(function() {
+            // Initialize chat widget toggle
+            const chatWidgetButton = $('#chatWidgetButton');
+            const floatingChatContainer = $('#floatingChatContainer');
+            const closeChatBtn = $('#closeChatBtn');
+            
+            // Check if chat was open before page reload
+            const chatWasOpen = localStorage.getItem('chatOpen') === 'true';
+            
+            // Toggle chat visibility
+            chatWidgetButton.on('click', function() {
+                const isNowOpen = floatingChatContainer.hasClass('hidden');
+                floatingChatContainer.toggleClass('hidden');
+                
+                // Store state in localStorage
+                localStorage.setItem('chatOpen', isNowOpen ? 'true' : 'false');
+                
+                // Scroll to bottom after the container becomes visible
+                setTimeout(scrollToBottom, 100);
+            });
+            
+            // Close chat button
+            closeChatBtn.on('click', function() {
+                floatingChatContainer.addClass('hidden');
+                localStorage.setItem('chatOpen', 'false');
+            });
+            
+            // Check URL for session_id parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionId = urlParams.get('session_id');
+            
+            // If chat was open or there's a session_id in URL, show the chat immediately
+            if (chatWasOpen || sessionId) {
+                floatingChatContainer.removeClass('hidden');
+                // Scroll to bottom after the container becomes visible
+                setTimeout(scrollToBottom, 100);
+            }
+            
+            // Initialize user and load chat history
+            initializeUser();
+            loadChatHistory(sessionId);
+            
+            // Chat form submission
+            $("#chat-form").on("submit", handleChatSubmit);
+            
+            // Recent conversations button
+            $("#recentConversationBtn").on("click", function() {
+                // Store chat state before navigation
+                localStorage.setItem('chatOpen', 'true');
+                window.location.href = '/recent_conversations';
+            });
+
+            // Listen for beforeunload event to persist chat state
+            window.addEventListener('beforeunload', function() {
+                // Store current chat state
+                const isChatOpen = !floatingChatContainer.hasClass('hidden');
+                localStorage.setItem('chatOpen', isChatOpen ? 'true' : 'false');
+            });
+        });
+
+        function initializeUser() {
+            // First try to get user info from session
+            $.ajax({
+                url: "/session/info",
+                type: "GET",
+                success: function(response) {
+                    if (response.success && response.session_info) {
+                        const session = response.session_info;
+                        if (session.user_name && session.user_email) {
+                            // Update localStorage with current session info
+                            localStorage.setItem('chatbot_user_name', session.user_name);
+                            localStorage.setItem('chatbot_user_email', session.user_email);
+                            if (session.user_phone) {
+                                localStorage.setItem('chatbot_user_phone', session.user_phone);
+                            }
+                            
+            // Display user info
+                updateUserInfoDisplay(session.user_name, session.user_email, session.user_phone);
+                return;
+            }
+        }
+        
+        // Fallback to localStorage if session info not available
+        const userName = localStorage.getItem('chatbot_user_name');
+        const userEmail = localStorage.getItem('chatbot_user_email');
+        const userPhone = localStorage.getItem('chatbot_user_phone');
+        
+        if (userName && userEmail) {
+            updateUserInfoDisplay(userName, userEmail, userPhone);
+        } else {
+            showLoginPrompt();
+        }
+    },
+    error: function() {
+        // Fallback to localStorage if session check fails
+        const userName = localStorage.getItem('chatbot_user_name');
+        const userEmail = localStorage.getItem('chatbot_user_email');
+        const userPhone = localStorage.getItem('chatbot_user_phone');
+        
+        if (userName && userEmail) {
+            updateUserInfoDisplay(userName, userEmail, userPhone);
+        } else {
+            showLoginPrompt();
+        }
+    }
+});
+}
+
+function updateUserInfoDisplay(name, email, phone) {
+    let userInfoText = `Logged in as: ${name} | ${email}`;
+    if (phone) userInfoText += ` | ${phone}`;
+    document.getElementById('userInfoDisplay').textContent = userInfoText;
+}
+
+function showLoginPrompt() {
+    document.getElementById('userInfoDisplay').innerHTML = 
+        '<span class="error-message">Please <a href="/signup" style="color: #6366f1;">log in</a> to use the chat.</span>';
+}
+
+function loadChatHistory(sessionId = null) {
+    // Show loading indicator
+    const loadingId = "loading-" + Date.now();
+    $("#chatbox").append(`<div class="bot-msg loading-message" id="${loadingId}">Loading conversation history...</div><div class="clear"></div>`);
+    
+    // Determine which session to load
+    const loadSessionId = sessionId || (new URLSearchParams(window.location.search)).get('session_id');
+    
+    $.ajax({
+        url: "/get_chat_history",
+        type: "GET",
+        data: loadSessionId ? { session_id: loadSessionId } : {},
+        success: function(response) {
+            $("#" + loadingId).remove();
+            
+            if (response.success && response.chat_history && response.chat_history.length > 0) {
+                // Clear any existing messages
+                $("#chatbox").empty();
+                
+                // Add each message to the chatbox
+                response.chat_history.forEach(function(chat) {
+                    const messageClass = chat.sender === 'User' ? 'user-msg' : 'bot-msg';
+                    const timestamp = chat.CreatedOn ? formatTime(new Date(chat.CreatedOn)) : '';
+                    const messageId = chat.MessageID || 'msg-' + Date.now();
+                    
+                    // Add sentiment class if available
+                    const sentimentClass = chat.sentiment ? chat.sentiment.toLowerCase() : '';
+                    
+                    $("#chatbox").append(`
+                        <div class="${messageClass} ${sentimentClass}" id="${messageId}">
+                            ${formatWithSources(chat.MessageContent)}
+                            ${timestamp ? `<span class="message-timestamp">${timestamp}</span>` : ''}
+                            ${chat.sender === 'Bot' ? createReactionButtons(messageId) : ''}
+                        </div>
+                        <div class="clear"></div>
+                    `);
+                    
+                    // Store any existing reactions
+                    if (chat.reactions) {
+                        messageReactions[messageId] = chat.reactions;
+                        updateReactionButtons(messageId);
+                    }
+                });
+                
+                scrollToBottom();
+            } else if (!loadSessionId && !welcomeMessageShown) {
+                // Only show welcome message if not viewing a specific session and not already shown
+                const userName = localStorage.getItem('chatbot_user_name');
+                if (userName) {
+                    addBotMessage(`Hello ${userName}! I'm your QODBC Chatbot assistant. Ask me anything!`);
+                    welcomeMessageShown = true;
+                }
+            }
+        },
+        error: function(xhr, status, error) {
+            $("#" + loadingId).remove();
+            console.error("Error loading chat history:", error);
+            addBotMessage('<span class="error-message">Could not load conversation history.</span>');
+        }
+    });
+}
+
+function createReactionButtons(messageId) {
+    return `
+        <div class="reaction-container">
+            <button class="reaction-btn" data-message="${messageId}" data-reaction="👍">👍</button>
+            <button class="reaction-btn" data-message="${messageId}" data-reaction="👎">👎</button>
+        </div>
+    `;
+}
+
+function updateReactionButtons(messageId) {
+    const reactions = messageReactions[messageId] || {};
+    $(`[data-message="${messageId}"]`).each(function() {
+        const reaction = $(this).data('reaction');
+        if (reactions[reaction]) {
+            $(this).addClass('active');
+        } else {
+            $(this).removeClass('active');
+        }
+    });
+}
+
+function handleChatSubmit(e) {
+    e.preventDefault();
+    const message = $("#textInput").val().trim();
+    if (!message) return;
+    
+    // Check if user is properly logged in
+    if (!localStorage.getItem('chatbot_user_name') || !localStorage.getItem('chatbot_user_email')) {
+        addBotMessage('<span class="error-message">Please log in first to use the chat.</span>');
+        return;
+    }
+    
+    // Analyze sentiment before sending
+    analyzeSentiment(message);
+    
+    addUserMessage(message);
+    $("#textInput").val("");
+    
+    // Show loading
+    const loadingId = "loading-" + Date.now();
+    $("#chatbox").append(`<div class="bot-msg loading-message" id="${loadingId}">Processing your question...</div><div class="clear"></div>`);
+    scrollToBottom();
+    
+    // Send message as JSON
+    $.ajax({
+        url: "/get",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+            message: message,
+            user_name: localStorage.getItem('chatbot_user_name'),
+            user_email: localStorage.getItem('chatbot_user_email'),
+            user_phone: localStorage.getItem('chatbot_user_phone') || '',
+            user_mood: currentUserMood
+        }),
+        success: function(response) {
+            $("#" + loadingId).remove();
+            const botResponse = response.response || response;
+            const messageId = 'msg-' + Date.now();
+            
+            // Add the bot message with reaction buttons
+            $("#chatbox").append(`
+                <div class="bot-msg ${response.sentiment || ''}" id="${messageId}">
+                    ${formatWithSources(botResponse)}
+                    <div class="reaction-container">
+                        <button class="reaction-btn" data-message="${messageId}" data-reaction="👍">👍</button>
+                        <button class="reaction-btn" data-message="${messageId}" data-reaction="👎">👎</button>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            `);
+            
+            // Initialize empty reactions for this message
+            messageReactions[messageId] = {};
+            
+            // Attach reaction handlers
+            $(`.reaction-btn[data-message="${messageId}"]`).on('click', function() {
+                const reaction = $(this).data('reaction');
+                toggleReaction(messageId, reaction);
+            });
+            
+            scrollToBottom();
+        },
+        error: function(xhr, status, error) {
+            $("#" + loadingId).remove();
+            console.error("Chat error:", xhr.responseText);
+            const errorMsg = xhr.responseJSON?.error || error;
+            addBotMessage(`<span class="error-message">Sorry, there was an error processing your request: ${errorMsg}</span>`);
+        }
+    });
+}
+
+function analyzeSentiment(message) {
+    // Simple sentiment analysis (in a real app, you'd use an API or more sophisticated analysis)
+    const negativeWords = ['angry', 'frustrated', 'annoyed', 'upset', 'mad', 'disappointed', 'hate'];
+    const positiveWords = ['happy', 'excited', 'great', 'awesome', 'love', 'thanks', 'thank you'];
+    
+    const lowerMessage = message.toLowerCase();
+    let negativeCount = 0;
+    let positiveCount = 0;
+    
+    negativeWords.forEach(word => {
+        if (lowerMessage.includes(word)) negativeCount++;
+    });
+    
+    positiveWords.forEach(word => {
+        if (lowerMessage.includes(word)) positiveCount++;
+    });
+    
+    if (negativeCount > positiveCount) {
+        currentUserMood = 'frustrated';
+    } else if (positiveCount > negativeCount) {
+        currentUserMood = 'happy';
+    } else {
+        currentUserMood = 'neutral';
+    }
+    
+    console.log(`Detected user mood: ${currentUserMood}`);
+}
+
+function toggleReaction(messageId, reaction) {
+    if (!messageReactions[messageId]) {
+        messageReactions[messageId] = {};
+    }
+    
+    // Toggle reaction
+    if (messageReactions[messageId][reaction]) {
+        delete messageReactions[messageId][reaction];
+    } else {
+        messageReactions[messageId][reaction] = true;
+    }
+    
+    // Update UI
+    updateReactionButtons(messageId);
+    
+    // In a real app, you'd send this to your backend to persist
+    // For now, we'll just log it
+    console.log(`Reaction ${reaction} toggled for message ${messageId}`);
+}
+
+function addUserMessage(message) {
+    if (!message || message.trim() === '') return;
+    $("#chatbox").append(`<div class="user-msg">${formatWithSources(message)}</div><div class="clear"></div>`);
+    scrollToBottom();
+}
+
+function addBotMessage(message) {
+    if (!message || message.trim() === '') return;
+    const messageId = 'msg-' + Date.now();
+    $("#chatbox").append(`
+        <div class="bot-msg" id="${messageId}">
+            ${formatWithSources(message)}
+            <div class="reaction-container">
+                <button class="reaction-btn" data-message="${messageId}" data-reaction="👍">👍</button>
+                <button class="reaction-btn" data-message="${messageId}" data-reaction="👎">👎</button>
+            </div>
+        </div>
+        <div class="clear"></div>
+    `);
+    
+    // Initialize empty reactions for this message
+    messageReactions[messageId] = {};
+    
+    // Attach reaction handlers
+    $(`.reaction-btn[data-message="${messageId}"]`).on('click', function() {
+        const reaction = $(this).data('reaction');
+        toggleReaction(messageId, reaction);
+    });
+    
+    scrollToBottom();
+}
+
+function scrollToBottom() {
+    const chatbox = $("#chatbox")[0];
+    if (chatbox) {
+        // Use setTimeout to ensure the scroll happens after DOM updates
+        setTimeout(() => {
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }, 0);
+    }
+}
+
+function formatTime(date) {
+    try {
+        if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+            return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } catch (e) {
+        console.warn("Time formatting error:", e);
+        return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+}
+function separateContentAndSources(text) {
+    // Improved regex to match all variations of source indicators
+    const sourcePattern = /(?:Sources?|References?|Links?):?\s*([\s\S]*)$/i;
+    const match = text.match(sourcePattern);
+    
+    const result = {
+        mainContent: text,
+        sources: []
+    };
+
+    if (match) {
+        // Everything before the source marker is main content
+        result.mainContent = text.substring(0, match.index).trim();
+        
+        // Extract all URLs from the sources section
+        const urlPattern = /(https?:\/\/[^\s<]+)/gi;
+        let sourceMatch;
+        
+        // Find all URLs in the sources section
+        while ((sourceMatch = urlPattern.exec(match[1])) !== null) {
+            result.sources.push(sourceMatch[0].trim());
+        }
+    } else {
+        // If no explicit source marker, try to find URLs at the end
+        const urlPattern = /(https?:\/\/[^\s<]+)/gi;
+        const urls = [];
+        let urlMatch;
+        let lastIndex = 0;
+        
+        // Find all URLs in the text
+        while ((urlMatch = urlPattern.exec(text)) !== null) {
+            urls.push({
+                url: urlMatch[0],
+                index: urlMatch.index
+            });
+            lastIndex = urlPattern.lastIndex;
+        }
+        
+        // If URLs are at the end, consider them as sources
+        if (urls.length > 0 && lastIndex >= text.length - 20) {
+            result.mainContent = text.substring(0, urls[0].index).trim();
+            result.sources = urls.map(u => u.url);
+        }
+    }
+    
+    return result;
+}
+
+function processUrlsInContent(content) {
+    // Enhanced URL detection pattern that excludes already processed sources
+    const urlPattern = /(https?:\/\/[^\s<]+)/gi;
+    
+    // Replace all URLs with clickable links
+    return content.replace(urlPattern, 
+        (url) => `<a href="${cleanUrl(url)}" target="_blank">${cleanUrl(url)}</a>`
+    );
+}
+
+function processSources(sources) {
+    if (sources.length === 0) return '';
+    
+    // Process each source URL
+    const processedSources = sources.map(source => {
+        const cleaned = cleanUrl(source);
+        return `<span class="source-link">→ <a href="${cleaned}" target="_blank">${cleaned}</a></span>`;
+    });
+    
+    return `<div class="sources-section"><strong>Sources:</strong><br>${processedSources.join('<br>')}</div>`;
+}
+
+function processSources(sources) {
+    if (sources.length === 0) return '';
+    
+    // Process each source URL
+    const processedSources = sources.map(source => {
+        const cleaned = cleanUrl(source);
+        return `<span class="source-link">→ <a href="${cleaned}" target="_blank">${cleaned}</a></span>`;
+    });
+    
+    return `<strong>Sources:</strong><br>${processedSources.join('<br>')}`;
+}
+function formatWithSources(text) {
+    if (!text || text === 'undefined' || text === 'null') {
+        return '<span class="error-message">Message content unavailable</span>';
+    }
+
+    try {
+        // First, separate the main content from sources
+        const { mainContent, sources } = separateContentAndSources(text);
+        
+        // Convert newlines to <br> tags in main content
+        let formattedContent = escapeHtml(mainContent).replace(/\n/g, '<br>');
+        
+        // Process URLs in main content
+        formattedContent = processUrlsInContent(formattedContent);
+        
+        // Process sources if they exist
+        if (sources.length > 0) {
+            formattedContent += '<br><br>' + processSources(sources);
+        }
+        
+        return formattedContent;
+    } catch (e) {
+        console.warn("Error formatting message:", e);
+        return escapeHtml(text).replace(/\n/g, '<br>');
+    }
+}
+
+function cleanUrl(url) {
+    // Remove any URL encoding and trailing characters
+    try {
+        // First decode URI components
+        let cleaned = decodeURIComponent(url);
+        
+        // Remove <br> tags and other HTML artifacts
+        cleaned = cleaned.replace(/%3Cbr%3E/gi, '')
+                         .replace(/<br\s*\/?>/gi, '')
+                         .replace(/\s+/g, ' ')
+                         .trim();
+        
+        // Remove any trailing punctuation that might have been attached
+        cleaned = cleaned.replace(/[.,;:!?]+$/, '');
+        
+        return cleaned;
+    } catch (e) {
+        // If URI decoding fails, just do basic cleaning
+        return url.replace(/%3Cbr%3E/gi, '')
+                 .replace(/<br\s*\/?>/gi, '')
+                 .replace(/\s+/g, ' ')
+                 .trim();
+    }
+}
+
+function escapeHtml(text) {
+    if (!text || text === 'undefined' || text === 'null') {
+        return '';
+    }
+    
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+</script>
+</body>
+</html>
